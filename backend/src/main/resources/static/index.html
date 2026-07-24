@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javaho - Modern Futuristic Web IDE</title>
+    <meta name="description" content="Write, execute, and experiment with Javaho, a beginner-friendly programming language inspired by Bhojpuri, built entirely with Java.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Monaco Editor CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js"></script>
+</head>
+<body class="futuristic-dark">
+    <!-- Background Ambient Glow Orbs -->
+    <div class="glow-orb orb-purple"></div>
+    <div class="glow-orb orb-cyan"></div>
+    <div class="glow-orb orb-pink"></div>
+
+    <!-- Main Container -->
+    <div class="app-window">
+        <!-- Floating Glass Header -->
+        <header class="navbar glass-panel">
+            <div class="brand">
+                <div class="logo-wrapper">
+                    <div class="logo-icon">
+                        <span>JH</span>
+                    </div>
+                    <div class="logo-glow"></div>
+                </div>
+                <div class="brand-text">
+                    <h1 class="gradient-text">Javaho <span class="badge-v">v1.0</span></h1>
+                    <p class="tagline"><i class="fa-solid fa-bolt text-cyan"></i> Bhojpuri Programming Engine</p>
+                </div>
+            </div>
+
+            <div class="navbar-actions">
+                <div class="status-indicator glass-pill" id="statusIndicator">
+                    <span class="pulse-dot ready"></span>
+                    <span class="status-text" id="statusText">Ready</span>
+                </div>
+
+                <button class="btn btn-glass" id="aboutDevBtn">
+                    <i class="fa-solid fa-user-astronaut text-purple"></i> About Developer
+                </button>
+
+                <div class="sample-dropdown">
+                    <button class="btn btn-glass" id="samplesBtn">
+                        <i class="fa-solid fa-cubes-stacked text-purple"></i> Code Samples <i class="fa-solid fa-chevron-down arrow"></i>
+                    </button>
+                    <div class="dropdown-menu glass-menu" id="samplesMenu">
+                        <a href="#" data-sample="fullDemo"><i class="fa-solid fa-wand-magic-sparkles text-purple"></i> Full Language Demo</a>
+                        <a href="#" data-sample="arithmetic"><i class="fa-solid fa-calculator text-cyan"></i> Arithmetic & Math</a>
+                        <a href="#" data-sample="whileLoop"><i class="fa-solid fa-rotate text-emerald"></i> While Loop (jabtak)</a>
+                        <a href="#" data-sample="conditionals"><i class="fa-solid fa-code-branch text-amber"></i> Conditionals (agar/nahin)</a>
+                    </div>
+                </div>
+
+                <button class="btn btn-glass" id="clearBtn">
+                    <i class="fa-solid fa-eraser text-amber"></i> Clear
+                </button>
+
+                <button class="btn btn-glow-run" id="runBtn">
+                    <i class="fa-solid fa-play"></i> <span>Run Program</span> <kbd>Ctrl+Enter</kbd>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main IDE Workspace Split -->
+        <main class="ide-container">
+            <!-- Left Panel: Code Editor -->
+            <section class="editor-section glass-panel">
+                <div class="panel-header">
+                    <div class="tab-active glass-tab">
+                        <i class="fa-solid fa-code-commit text-purple"></i>
+                        <span>main.jh</span>
+                        <span class="tab-indicator"></span>
+                    </div>
+                    <div class="panel-actions">
+                        <button class="btn-icon" id="formatBtn" title="Auto Indent / Format Code"><i class="fa-solid fa-align-left"></i></button>
+                        <span class="engine-tag"><i class="fa-brands fa-java"></i> Java Core</span>
+                    </div>
+                </div>
+
+                <!-- Editor Wrapper -->
+                <div class="editor-wrapper" id="editorWrapper">
+                    <div id="monacoEditor"></div>
+                    <textarea id="codeFallback" spellcheck="false" style="display: none;"></textarea>
+                </div>
+
+                <!-- Interactive Keyword Glass Bar -->
+                <div class="cheatsheet-bar glass-footer">
+                    <span class="cs-label"><i class="fa-solid fa-terminal text-cyan"></i> Quick Tokens:</span>
+                    <div class="kw-chips">
+                        <span class="kw-chip" title="Variable Declaration">rakh</span>
+                        <span class="kw-chip" title="Print Output">dikha</span>
+                        <span class="kw-chip" title="If Condition">agar</span>
+                        <span class="kw-chip" title="Else Condition">nahin</span>
+                        <span class="kw-chip" title="While Loop">jabtak</span>
+                        <span class="kw-chip" title="Block Terminator">khatam</span>
+                        <span class="kw-chip" title="True Literal">sahi</span>
+                        <span class="kw-chip" title="False Literal">galat</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Resizer Divider -->
+            <div class="resizer" id="resizer"></div>
+
+            <!-- Right Panel: Console & Diagnostics -->
+            <section class="console-section glass-panel">
+                <div class="panel-header console-header">
+                    <div class="tabs-nav">
+                        <button class="tab-btn active" data-tab="outputTab">
+                            <i class="fa-solid fa-terminal"></i> Output
+                        </button>
+                        <button class="tab-btn" data-tab="errorTab" id="errorTabBtn">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Errors <span class="error-badge" id="errorBadge">0</span>
+                        </button>
+                        <button class="tab-btn" data-tab="astTab" id="astTabBtn">
+                            <i class="fa-solid fa-sitemap"></i> AST / Tokens
+                        </button>
+                        <button class="tab-btn" data-tab="guideTab">
+                            <i class="fa-solid fa-book-open"></i> Docs
+                        </button>
+                    </div>
+                    <div class="console-actions">
+                        <button class="btn-icon" id="copyOutputBtn" title="Copy Output"><i class="fa-solid fa-copy"></i></button>
+                        <div class="exec-stats" id="execStats">
+                            <span class="stats-pill"><i class="fa-solid fa-stopwatch"></i> <span id="statsTime">--</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="console-content">
+                    <!-- Tab 1: Terminal Output -->
+                    <div class="tab-pane active" id="outputTab">
+                        <div class="terminal-box">
+                            <div class="terminal-welcome">
+                                <div class="welcome-icon"><i class="fa-solid fa-terminal"></i></div>
+                                <h4>Javaho Interactive Console</h4>
+                                <p>Press <strong>Run Program</strong> or <strong>Ctrl+Enter</strong> to execute code.</p>
+                            </div>
+                            <pre class="console-output" id="outputConsole" style="display:none;"></pre>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Error Diagnostics -->
+                    <div class="tab-pane" id="errorTab">
+                        <div class="error-list" id="errorConsole">
+                            <div class="empty-state">
+                                <div class="empty-icon text-emerald"><i class="fa-solid fa-shield-check"></i></div>
+                                <h3>No Errors Detected</h3>
+                                <p>Your code compiled & executed cleanly without syntax or runtime issues.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: AST & Token Inspector -->
+                    <div class="tab-pane" id="astTab">
+                        <div class="ast-inspector">
+                            <div class="ast-section">
+                                <div class="ast-header">
+                                    <h5><i class="fa-solid fa-diagram-project text-purple"></i> Abstract Syntax Tree (AST)</h5>
+                                </div>
+                                <pre class="ast-tree-view" id="astTreeView">Run Javaho code to visualize the generated AST tree structure.</pre>
+                            </div>
+
+                            <div class="ast-section">
+                                <div class="ast-header">
+                                    <h5><i class="fa-solid fa-list-ol text-cyan"></i> Lexical Tokens Stream</h5>
+                                </div>
+                                <div class="token-list" id="tokenList">
+                                    <span class="text-muted">No tokens scanned yet.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: Language Docs -->
+                    <div class="tab-pane" id="guideTab">
+                        <div class="guide-cards">
+                            <div class="guide-header">
+                                <h3><i class="fa-solid fa-book-bookmark text-purple"></i> Javaho Syntax Cheat Sheet</h3>
+                                <p>All keywords and concepts supported by the custom Java interpreter.</p>
+                            </div>
+                            
+                            <div class="cards-grid">
+                                <div class="doc-card">
+                                    <div class="doc-icon text-cyan"><i class="fa-solid fa-cube"></i></div>
+                                    <div class="doc-body">
+                                        <h5>Variables</h5>
+                                        <code>rakh x = 10</code>
+                                        <p>Declare local integer, string, or boolean variable.</p>
+                                    </div>
+                                </div>
+
+                                <div class="doc-card">
+                                    <div class="doc-icon text-emerald"><i class="fa-solid fa-print"></i></div>
+                                    <div class="doc-body">
+                                        <h5>Print Output</h5>
+                                        <code>dikha "Ram Ram!"</code>
+                                        <p>Print values or string expressions to console.</p>
+                                    </div>
+                                </div>
+
+                                <div class="doc-card">
+                                    <div class="doc-icon text-purple"><i class="fa-solid fa-code-branch"></i></div>
+                                    <div class="doc-body">
+                                        <h5>Conditionals</h5>
+                                        <code>agar x > 5 ... nahin ... khatam</code>
+                                        <p>If / Else conditional execution block.</p>
+                                    </div>
+                                </div>
+
+                                <div class="doc-card">
+                                    <div class="doc-icon text-amber"><i class="fa-solid fa-rotate-right"></i></div>
+                                    <div class="doc-body">
+                                        <h5>Loops</h5>
+                                        <code>jabtak i <= 5 ... khatam</code>
+                                        <p>While loop executed while condition is <code>sahi</code>.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- About Developer Glass Overlay Modal -->
+    <div class="modal-overlay" id="devModalOverlay">
+        <div class="modal-card glass-modal">
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
+            
+            <div class="dev-header">
+                <div class="dev-avatar-wrapper">
+                    <div class="dev-avatar">IM</div>
+                    <div class="avatar-glow"></div>
+                </div>
+                <div class="dev-title-block">
+                    <h2>Ishan Mishra</h2>
+                    <span class="gdg-badge"><i class="fa-brands fa-google text-cyan"></i> GDG On Campus IEM Lead</span>
+                </div>
+            </div>
+
+            <div class="dev-sub-tag">
+                <i class="fa-solid fa-microchip text-purple"></i> Electronics & Communication Engineering Undergraduate
+            </div>
+
+            <div class="dev-bio">
+                <p>Ishan Mishra is a passionate Electronics and Communication Engineering undergraduate with a strong interest in software development, Java, Data Structures & Algorithms, and full-stack web development. He has built multiple real-world projects and actively contributes to the developer community as the GDG On Campus IEM Lead. With strong problem-solving skills, leadership experience, and a continuous learning mindset, he is eager to develop impactful software solutions and grow as a software engineer.</p>
+            </div>
+
+            <div class="dev-skills">
+                <span class="skill-tag text-purple"><i class="fa-brands fa-java"></i> Java 17+</span>
+                <span class="skill-tag text-cyan"><i class="fa-solid fa-code"></i> DSA & Algorithms</span>
+                <span class="skill-tag text-emerald"><i class="fa-solid fa-cubes"></i> Spring Boot</span>
+                <span class="skill-tag text-amber"><i class="fa-solid fa-layer-group"></i> Full-Stack Web</span>
+                <span class="skill-tag text-pink"><i class="fa-solid fa-gears"></i> Compiler Engineering</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
