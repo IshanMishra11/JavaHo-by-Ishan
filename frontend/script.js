@@ -29,6 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let editor = null;
 
+    // Live API Endpoint Configuration
+    // Automatically uses relative /api/run on localhost, or Render production URL on remote deployment
+    const RENDER_BACKEND_URL = 'https://javaho-backend.onrender.com';
+    const API_ENDPOINT = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? '/api/run'
+        : `${RENDER_BACKEND_URL}/api/run`;
+
     // Code Samples Library
     const codeSamples = {
         fullDemo: `# Javaho Language Demo
@@ -204,7 +211,7 @@ khatam`
         const startTime = performance.now();
 
         try {
-            const response = await fetch('/api/run', {
+            const response = await fetch(API_ENDPOINT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ code: code })
@@ -231,7 +238,7 @@ khatam`
             }
         } catch (err) {
             setStatus('error', 'Server Error');
-            displayErrors([`Connection Failed: ${err.message}. Ensure Spring Boot server is running on port 8080.`]);
+            displayErrors([`Connection Failed: ${err.message}. Ensure backend API is active at ${API_ENDPOINT}`]);
         }
     }
 
